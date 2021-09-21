@@ -1,6 +1,7 @@
 export enum Gender {
   MALE = 'male',
   FEMALE = 'female',
+  ALL = 'all',
 }
 
 export interface IName {
@@ -14,5 +15,5 @@ export interface IUser {
   gender: Gender;
   city: string;
   state: string;
-  dateRegistered: number;
+  dateRegistered: string;
 }

@@ -20,7 +20,7 @@ const useStyles = makeStyles((theme: Theme) =>
     paper: {
       display: 'flex',
       padding: 20,
-      justifyContent: 'space-',
+      justifyContent: 'space-around',
     },
   })
 );
@@ -50,14 +50,18 @@ const App: FC<{}> = (): JSX.Element => {
             gender,
             city,
             state,
-            dateRegistered: new Date(date).getTime(),
+            dateRegistered: date,
           };
 
           const currMap = new Map(countryUsersMap);
           const currCountryArray = [
             ...(currMap.get(country) || []),
             newUser,
-          ].sort((a, b) => b.dateRegistered - a.dateRegistered);
+          ].sort(
+            (a, b) =>
+              new Date(b.dateRegistered).getTime() -
+              new Date(a.dateRegistered).getTime()
+          );
 
           return setCountryUserMap(
             countryUsersMap.set(country, currCountryArray)
