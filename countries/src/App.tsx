@@ -1,5 +1,9 @@
+import { Container, Paper, Theme } from '@mui/material';
+import { makeStyles, createStyles } from '@mui/styles';
 import axios, { AxiosError, AxiosResponse } from 'axios';
-import React, { BaseSyntheticEvent, FC, useEffect, useState } from 'react';
+import React, { FC, useEffect, useState } from 'react';
+import { CountryList } from './components/CountryList';
+import { UserList } from './components/UserList';
 import { IUser } from './types/User';
 
 const getCountries = async () => {
@@ -11,12 +15,24 @@ const getCountries = async () => {
     .catch((err: AxiosError) => alert(err.message));
 };
 
-const App: FC<{}> = () => {
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    paper: {
+      display: 'flex',
+      padding: 20,
+      justifyContent: 'space-',
+    },
+  })
+);
+
+const App: FC<{}> = (): JSX.Element => {
   const [countryUsersMap, setCountryUserMap] = useState<Map<string, IUser[]>>(
     new Map<string, IUser[]>()
   );
   const [countryList, setCountryList] = useState<string[]>([]);
   const [selectedCountry, setSelectedCountry] = useState<string>('');
+
+  const classes = useStyles();
 
   useEffect(() => {
     Promise.all([getCountries()])
@@ -70,31 +86,19 @@ const App: FC<{}> = () => {
       });
   }, [countryUsersMap]);
 
-  const handleClickCountry = (event: BaseSyntheticEvent) => {
-    const { country } = event.target.dataset;
-    setSelectedCountry(country);
-  };
-
   return (
-    <>
-      <div>
-        <ul onClick={handleClickCountry}>
-          {countryList.map((country) => (
-            <li key={`li-country-key-${country}`} data-country={country}>
-              {country}
-            </li>
-          ))}
-        </ul>
-        <ul>
-          {countryUsersMap.get(selectedCountry) &&
-            countryUsersMap.get(selectedCountry)?.map((user) => (
-              <p key={`p-${user.dateRegistered}`}>
-                {user.name} {new Date(user.dateRegistered).toString()}
-              </p>
-            ))}
-        </ul>
-      </div>
-    </>
+    <Container maxWidth={'xl'}>
+      <Paper elevation={3} className={classes.paper}>
+        <CountryList
+          countryList={countryList}
+          setSelectedCountry={setSelectedCountry}
+        />
+        <UserList
+          countryUsersMap={countryUsersMap}
+          selectedCountry={selectedCountry}
+        />
+      </Paper>
+    </Container>
   );
 };
 
